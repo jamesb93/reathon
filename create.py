@@ -1,8 +1,7 @@
 from nodes import Session, Track, Item, Source
 
-tiger = Source().file('/Users/james/Downloads/Bengal_Tiger_aggresive_grunt_medium.wav')
+tiger = Source(file='/Users/james/Downloads/Bengal_Tiger_aggresive_grunt_medium.wav')
 session = Session()
-
 
 session.add(
     Track(
