@@ -26,7 +26,21 @@ class Session(Node):
     def __init__(self, *nodes_to_add, **kwargs):
         self.name = 'REAPER_PROJECT'
         self.valid_children = Track
+        self.string = ''
         super().__init__(*nodes_to_add, **kwargs)
+
+    def traverse(self, origin):
+        self.string += f'<{origin.name}\n'
+        for k, v in origin.props.items():
+                self.string += f'{k} {v}\n'
+        for node in origin.nodes:
+            self.traverse(node)
+        self.string += '>\n'
+
+    def write(self, path):
+        self.traverse(self)
+        with open(path, "w") as f:
+            f.write(self.string)
 
 class Track(Node):
     def __init__(self, *nodes_to_add, **kwargs):
