@@ -10,11 +10,6 @@ class Node:
         self.parents = []
         self.add(*nodes_to_add)
         for x, y in kwargs.items():
-            # if hasattr(self, x):
-            #     method = getattr(self, x)
-            #     method(y)
-            # else:
-            #     raise InvalidNodeMethod(self, x)
             self.props[x.upper()] = y
 
     def add(self, *nodes_to_add):
