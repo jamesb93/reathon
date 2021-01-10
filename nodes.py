@@ -13,7 +13,7 @@ class Node:
             #     method(y)
             # else:
             #     raise InvalidNodeMethod(self, x)
-            print(x.upper())
+            self.props[x.upper()] = y
 
     def add(self, *nodes_to_add):
         for node in nodes_to_add:
