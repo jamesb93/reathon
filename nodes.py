@@ -35,26 +35,14 @@ class Track(Node):
         super().__init__(*nodes_to_add, **kwargs)
         
 class Item(Node):
-    #item has to have length and position but not sure if anything else
-    # can have volume set in absolute and it converts to DB
-    # VOLPAN 0.5 0 1 -1
     def __init__(self, *nodes_to_add, **kwargs):
         self.name = 'ITEM'
         self.valid_children = Source
         super().__init__(*nodes_to_add, **kwargs)
-    
-    # def length(self, length):
-    #     self.props['LENGTH'] = length
-    #     return self
-
-    # def position(self, pos):
-    #     self.props['POSITION'] = pos
-    #     return self
 
 class Source(Node):
     def __init__(self, *nodes_to_add, **kwargs):
-        self.name = 'SOURCE'
-        self.valid_children = ''
+        self.valid_children = Source
         self.extension_lookup = {
             '.wav' : 'WAVE',
             '.wave' : 'WAVE',
