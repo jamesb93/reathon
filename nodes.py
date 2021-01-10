@@ -52,10 +52,16 @@ class Source(Node):
             '.ogg' : 'VORBIS'
         }
         super().__init__(*nodes_to_add, **kwargs)
-        
-    def file(self, path):
-        self.props['FILE'] = path
-        self.name = f'SOURCE {self.extension_lookup[Path(path).suffix]}'
-        return self
+        self.process_extension()
+
+    def process_extension(self):
+        try: 
+            ext = Path(
+                self.props['FILE']
+            ).suffix
+            self.name = f'SOURCE {self.extension_lookup[ext]}'
+        except KeyError:
+            self.name = 'SOURCE SECTION'
+
 
 
