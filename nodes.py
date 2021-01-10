@@ -8,11 +8,12 @@ class Node:
         self.parents = []
         self.add(*nodes_to_add)
         for x, y in kwargs.items():
-            if hasattr(self, x):
-                method = getattr(self, x)
-                method(y)
-            else:
-                raise InvalidNodeMethod(self, x)
+            # if hasattr(self, x):
+            #     method = getattr(self, x)
+            #     method(y)
+            # else:
+            #     raise InvalidNodeMethod(self, x)
+            print(x.upper())
 
     def add(self, *nodes_to_add):
         for node in nodes_to_add:
@@ -45,13 +46,13 @@ class Item(Node):
         self.valid_children = Source
         super().__init__(*nodes_to_add, **kwargs)
     
-    def length(self, length):
-        self.props['LENGTH'] = length
-        return self
+    # def length(self, length):
+    #     self.props['LENGTH'] = length
+    #     return self
 
-    def position(self, pos):
-        self.props['POSITION'] = pos
-        return self
+    # def position(self, pos):
+    #     self.props['POSITION'] = pos
+    #     return self
 
 class Source(Node):
     def __init__(self, *nodes_to_add, **kwargs):
