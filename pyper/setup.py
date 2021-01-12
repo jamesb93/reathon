@@ -9,7 +9,7 @@ long_description = """
 
 You can `git clone` this repo, `cd` to it and then install via `pip install -e pyper`. You need to point `pip` to the folder containing setup.py, not the parent folder with examples and README.md etc.
 
-You can also `pip install pyper`.
+You can also `pip install py-pyper`.
 
 ## usage
 
@@ -113,7 +113,7 @@ project.write("properties1.rpp") # write the project out to the path
 ```
 """
 setup(
-    name="pyper",
+    name="py-pyper",
     version="0.0.1",
     author="James Bradbury",
     url="https://github.com/jamesb93/pyper",

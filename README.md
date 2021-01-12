@@ -6,7 +6,7 @@
 
 You can `git clone` this repo, `cd` to it and then install via `pip install -e pyper`. You need to point `pip` to the folder containing setup.py, not the parent folder with examples and README.md etc.
 
-You can also `pip install pyper`.
+You can also `pip install py-pyper`.
 
 ## usage
 
