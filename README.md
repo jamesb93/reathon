@@ -1,19 +1,19 @@
-# pyper
+# reathon
 
-`pyper` is a python package for constructing REAPER session with native python constructs. The majority of the interface is a reflection of the `.rpp` file structure which itself is very similar to `.xml` with tags and elements (except each element is called a 'chunk'). As such, you may need to know a bit about the underlying structure of REAPER's file format before using something like this. A good way to do this is to make a REAPER project and open the project in a text editor. You might also refer to [this document](https://github.com/ReaTeam/Doc/blob/master/State%20Chunk%20Definitions) which is fairly exhaustive.
+`reathon` is a python package for constructing REAPER session with native python constructs. The majority of the interface is a reflection of the `.rpp` file structure which itself is very similar to `.xml` with tags and elements (except each element is called a 'chunk'). As such, you may need to know a bit about the underlying structure of REAPER's file format before using something like this. A good way to do this is to make a REAPER project and open the project in a text editor. You might also refer to [this document](https://github.com/ReaTeam/Doc/blob/master/State%20Chunk%20Definitions) which is fairly exhaustive.
 
 ## installation
 
-You can `git clone` this repo, `cd` to it and then install via `pip install -e pyper`. You need to point `pip` to the folder containing setup.py, not the parent folder with examples and README.md etc.
+You can `git clone` this repo, `cd` to it and then install via `pip install -e reathon`. You need to point `pip` to the folder containing setup.py, not the parent folder with examples and README.md etc.
 
-You can also `pip install py-pyper`.
+You can also `pip install reathon`.
 
 ## usage
 
-`pyper` exposes objects for each type of 'chunk' or as I've called it **node** in the graph of objects in a session. A very simple example of a REAPER project with a single track would go as follows.
+`reathon` exposes objects for each type of 'chunk' or as I've called it **node** in the graph of objects in a session. A very simple example of a REAPER project with a single track would go as follows.
 
 ```python
-from pyper.nodes import * # import all of the pyper nodes
+from reathon.nodes import * # import all of the reathon nodes
 
 project = Project( # create an instance of a project
     Track() # and pass a Track() object to the constructor
@@ -22,11 +22,11 @@ project = Project( # create an instance of a project
 project.write("basic.rpp") # write the project out to the path
 ```
 
-We can construct such graphs in a variety of ways which lends `pyper` towards programmatic constructions of projects.
+We can construct such graphs in a variety of ways which lends `reathon` towards programmatic constructions of projects.
 
 ```python
 # Using Loops
-from pyper.nodes import *
+from reathon.nodes import *
 
 project = Project() # create an instance of a project
 
@@ -38,16 +38,16 @@ project.write("loops.rpp") # write the project out to the path
 
 ```python
 # Comprehensions
-from pyper.nodes import *
+from reathon.nodes import *
 tracks = [Track() for x in range(100)]
 project = Project(*tracks)
 project.write("comprehensions.rpp") # write the project out to the path
 ```
 
-A more complex example might be to arrange a series of sound files randomly along a single track, similar to a granular synthesiser. This example presents new `pyper` nodes you won't have seen before
+A more complex example might be to arrange a series of sound files randomly along a single track, similar to a granular synthesiser. This example presents new `reathon` nodes you won't have seen before
 
 ```python
-from pyper.nodes import Project, Track, Item, Source # note new nodes Item() and Source()
+from reathon.nodes import Project, Track, Item, Source # note new nodes Item() and Source()
 from pathlib import Path
 import random
 
@@ -80,11 +80,11 @@ project.write("granular.rpp") # write it out
 ```
 
 ### props
-In the `.rpp` structure each 'chunk' can have various properties. For example, the `ITEM` chunk will have length and position properties that determine where in the timeline the item is positioned and the duration of the item. I don't want to implement functions for each of these so there are ways to insert arbitrary properties for each 'chunk', or what you are now familiar with as a `pyper` 'node'.
+In the `.rpp` structure each 'chunk' can have various properties. For example, the `ITEM` chunk will have length and position properties that determine where in the timeline the item is positioned and the duration of the item. I don't want to implement functions for each of these so there are ways to insert arbitrary properties for each 'chunk', or what you are now familiar with as a `reathon` 'node'.
 
 ```python
 # modifiying properties with function arguments
-from pyper.nodes import *
+from reathon.nodes import *
 item = Item(
     length = 10, 
     position = 0.5
@@ -98,7 +98,7 @@ project.write("properties1.rpp") # write the project out to the path
 
 ```python
 # modifiying properties by directly modifying the .props of the object
-from pyper.nodes import *
+from reathon.nodes import *
 item = Item() # create a blank item 10 seconds in length a 0.5 seconds in the timeline
 item.props = {
     "LENGTH" : 10,
