@@ -70,7 +70,6 @@ class Source(Node):
     def process_extension(self):
         try: 
             ext = Path(self.props['FILE']).suffix
-            print(ext)
             self.name = f'SOURCE {self.extension_lookup[ext]}'
         except KeyError:
             self.name = 'SOURCE SECTION'
