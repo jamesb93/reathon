@@ -1,4 +1,4 @@
-from reapy.nodes import Project, Track, Item, Source # note new nodes Item() and Source()
+from pyper.nodes import Project, Track, Item, Source # note new nodes Item() and Source()
 from pathlib import Path
 import random
 

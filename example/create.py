@@ -1,5 +1,5 @@
 # from reapy.nodes import Session, Track, Item, Source
-from reapy.nodes import *
+from pyper.nodes import *
 
 tiger = Source(file='/Users/james/Downloads/Bengal_Tiger_aggresive_grunt_medium.wav')
 session = Project()

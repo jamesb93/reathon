@@ -1,5 +1,5 @@
 from pathlib import Path
-from reapy.exceptions import InvalidNodeMethod
+from pyper.exceptions import InvalidNodeMethod
 
 class Node:
     def __init__(self, *nodes_to_add, **kwargs):
