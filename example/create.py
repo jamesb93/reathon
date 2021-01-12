@@ -2,7 +2,7 @@
 from reapy.nodes import *
 
 tiger = Source(file='/Users/james/Downloads/Bengal_Tiger_aggresive_grunt_medium.wav')
-session = Session()
+session = Project()
 session.add(
     Track(
         Item(
