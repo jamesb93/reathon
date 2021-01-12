@@ -20,7 +20,7 @@ class Node:
         return self
 
 
-class Session(Node):
+class Project(Node):
     def __init__(self, *nodes_to_add, **kwargs):
         self.name = 'REAPER_PROJECT'
         self.valid_children = Track
