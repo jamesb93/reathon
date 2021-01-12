@@ -114,7 +114,7 @@ project.write("properties1.rpp") # write the project out to the path
 """
 setup(
     name="py-pyper",
-    version="0.0.1",
+    version="0.0.2",
     author="James Bradbury",
     url="https://github.com/jamesb93/pyper",
     license="GLPv3+",
