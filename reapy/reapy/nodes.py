@@ -1,8 +1,6 @@
 from pathlib import Path
 from reapy.exceptions import InvalidNodeMethod
 
-# https://github.com/ReaTeam/Doc/blob/master/State%20Chunk%20Definitions
-
 class Node:
     def __init__(self, *nodes_to_add, **kwargs):
         self.nodes = []
