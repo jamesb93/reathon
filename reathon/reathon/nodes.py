@@ -7,8 +7,8 @@ class Node:
         self.props = []
         self.parents = []
         self.add(*nodes_to_add)
-        for x, y in kwargs.items():
-            self.props[x.upper()] = y
+        for prop, value in kwargs.items():
+            self.props.append([prop, str(value)])
 
     def add(self, *nodes_to_add):
         for node in nodes_to_add:
