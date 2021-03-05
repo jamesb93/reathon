@@ -100,10 +100,10 @@ project.write("properties1.rpp") # write the project out to the path
 # modifiying properties by directly modifying the .props of the object
 from reathon.nodes import *
 item = Item() # create a blank item 10 seconds in length a 0.5 seconds in the timeline
-item.props = {
-    "LENGTH" : 10,
-    "POSITION" : 0.5
-}
+item.props = [
+    ["LENGTH", 10],
+    ["POSITION", 0.5]
+]
 track = Track(item)
 project = Project(track)
 project.write("properties1.rpp") # write the project out to the path
