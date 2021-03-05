@@ -25,12 +25,18 @@ class Project(Node):
         self.name = 'REAPER_PROJECT'
         self.valid_children = Track
         self.string = ''
+        self.markers = []
         super().__init__(*nodes_to_add, **kwargs)
 
     def traverse(self, origin):
         self.string += f'<{origin.name}\n'
-        for k, v in origin.props.items():
-                self.string += f'{k} {v}\n'
+
+        for state in origin.props:
+            self.string += f'{state[0]} {state[1]}\n'
+        
+        for marker in self.markers:
+            self.string += f'MARKER {marker}\n'
+    
         for node in origin.nodes:
             self.traverse(node)
         self.string += '>\n'
