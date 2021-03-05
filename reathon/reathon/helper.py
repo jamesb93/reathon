@@ -1,2 +1,2 @@
 def marker(index:int, time:float, name):
-    return f"{index} {time} {name}"
+    return ['MARKER', f'{index} {time} {name}']
