@@ -8,7 +8,7 @@ class Node:
         self.parents = []
         self.add(*nodes_to_add)
         for prop, value in kwargs.items():
-            self.props.append([prop, str(value)])
+            self.props.append([prop.upper(), str(value)])
 
     def add(self, *nodes_to_add):
         for node in nodes_to_add:
@@ -25,7 +25,6 @@ class Project(Node):
         self.name = 'REAPER_PROJECT'
         self.valid_children = Track
         self.string = ''
-        self.markers = []
         super().__init__(*nodes_to_add, **kwargs)
 
     def traverse(self, origin):
@@ -33,9 +32,6 @@ class Project(Node):
 
         for state in origin.props:
             self.string += f'{state[0]} {state[1]}\n'
-        
-        for marker in self.markers:
-            self.string += f'MARKER {marker}\n'
     
         for node in origin.nodes:
             self.traverse(node)
@@ -70,19 +66,19 @@ class Source(Node):
             '.ogg' : 'VORBIS'
         }
         super().__init__(*nodes_to_add, **kwargs)
+        self.file = kwargs.get('file')
         self.process_extension()
-        self.clean_path()
+        # self.clean_path()
 
     def process_extension(self):
-        try: 
-            ext = Path(self.props['FILE']).suffix
+        ext = Path(self.file).suffix
+        try:
             self.name = f'SOURCE {self.extension_lookup[ext]}'
         except KeyError:
             self.name = 'SOURCE SECTION'
     
     def clean_path(self):
-        if 'FILE' in self.props:
-            self.props['FILE'] = f"'{self.props['FILE']}'"
+        self.file = f"'{self.file}'"
 
 
 
