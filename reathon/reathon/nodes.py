@@ -4,7 +4,7 @@ from reathon.exceptions import InvalidNodeMethod
 class Node:
     def __init__(self, *nodes_to_add, **kwargs):
         self.nodes = []
-        self.props = {}
+        self.props = []
         self.parents = []
         self.add(*nodes_to_add)
         for x, y in kwargs.items():
