@@ -8,6 +8,8 @@ class Node:
         self.parents = []
         self.add(*nodes_to_add)
         for prop, value in kwargs.items():
+            if prop == 'file':
+                value = self.wrap_file(value)
             self.props.append([prop.upper(), str(value)])
 
     def add(self, *nodes_to_add):
@@ -18,6 +20,10 @@ class Node:
             else:
                 print(f'You cannot add a {node.name} to a {self.name}')
         return self
+
+    @staticmethod
+    def wrap_file(path_to_wrap: str) -> str:
+        return f"'{path_to_wrap}'"
 
 
 class Project(Node):
@@ -65,10 +71,9 @@ class Source(Node):
             '.mp3' : 'MP3',
             '.ogg' : 'VORBIS'
         }
-        super().__init__(*nodes_to_add, **kwargs)
         self.file = kwargs.get('file')
         self.process_extension()
-        # self.clean_path()
+        super().__init__(*nodes_to_add, **kwargs)
 
     def process_extension(self):
         ext = Path(self.file).suffix
@@ -76,9 +81,7 @@ class Source(Node):
             self.name = f'SOURCE {self.extension_lookup[ext]}'
         except KeyError:
             self.name = 'SOURCE SECTION'
-    
-    def clean_path(self):
-        self.file = f"'{self.file}'"
+
 
 
 
