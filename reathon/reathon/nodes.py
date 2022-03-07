@@ -22,15 +22,6 @@ class Node:
                 print(f'You cannot add a {node.name} to a {self.name}')
         return self
 
-    def add_single(self, node_to_add):
-        # Same as add, but only adds one node, and also returns it.
-        if isinstance(node_to_add, self.valid_children):
-            self.nodes.append(node_to_add)
-            node_to_add.parents.append(self)
-        else:
-            print(f'You cannot add a {node_to_add.name} to a {self.node_to_add}')
-        return node_to_add
-
     def get_child(self, query):
         # Get child by index or propriety 'NAME':
         try:
@@ -112,8 +103,9 @@ class Project(Node):
                         this_chunk = line_array[0][1:].replace('\n', '')
                         
                         if(this_chunk in self.accepted_chunks):
-                            created_node = current_parent.add_single(self.accepted_chunks[this_chunk]())
-                            current_parent = created_node
+                            accepted_chunk = self.accepted_chunks[this_chunk]()
+                            current_parent.add_single(accepted_chunk)
+                            current_parent = accepted_chunk
                             current_hierarchy.append(current_parent)
                         else:
                             current_hierarchy.append(current_parent)
