@@ -93,7 +93,7 @@ class Project(Node):
 
         current_parent = self 
         current_hierarchy = [self]
-        with open(path) as f:
+        with open(path, 'r') as f:
             for line in f:
                 # Read through the lines in the rpp file:
                 line_array = self.line_pre_parse(line)
