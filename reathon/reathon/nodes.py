@@ -31,6 +31,22 @@ class Node:
             print(f'You cannot add a {node_to_add.name} to a {self.node_to_add}')
         return node_to_add
 
+    def get_child(self, query):
+        # Get child by index or propriety 'NAME':
+        try:
+            query = int(query)
+            if query < len(self.nodes):
+                return self.nodes[query]
+            else:
+                return None
+        except ValueError:
+            to_return = None
+            for i in range(len(self.nodes)):
+                for j in range(len(self.nodes[i].props)):
+                    if self.nodes[i].props[j][0].upper() == 'NAME' and self.nodes[i].props[j][1] == query:
+                        to_return = self.nodes[i]
+            return to_return
+
     def traverse(self, origin):
         self.string += f'<{origin.name}\n'
 
@@ -73,19 +89,7 @@ class Project(Node):
 
     def get_track(self, query):
         # Get track in project either by index or track name:
-        try:
-            query = int(query)
-            if query < len(self.nodes):
-                return self.nodes[query]
-            else:
-                return None
-        except ValueError:
-            to_return = None
-            for i in range(len(self.nodes)):
-                for j in range(len(self.nodes[i].props)):
-                    if self.nodes[i].props[j][0] == 'NAME' and self.nodes[i].props[j][1] == query:
-                        to_return = self.nodes[i]
-            return to_return
+        return super().get_child(query)
 
     def read(self, path):
         # Read an rpp file
@@ -177,6 +181,10 @@ class Track(Node):
         self.name = 'TRACK'
         self.valid_children = Item
         super().__init__(*nodes_to_add, **kwargs)
+
+    def get_item(self, query):
+        # Get track in project either by index or track name:
+        return super().get_child(query)
         
 class Item(Node):
     def __init__(self, *nodes_to_add, **kwargs):
