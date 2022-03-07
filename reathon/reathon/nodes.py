@@ -21,6 +21,15 @@ class Node:
                 print(f'You cannot add a {node.name} to a {self.name}')
         return self
 
+    def add_single(self, node_to_add):
+        # Same as add, but only adds one node, and also returns it.
+        if isinstance(node_to_add, self.valid_children):
+            self.nodes.append(node_to_add)
+            node_to_add.parents.append(self)
+        else:
+            print(f'You cannot add a {node_to_add.name} to a {self.node_to_add}')
+        return node_to_add
+
     @staticmethod
     def wrap_file(path_to_wrap: str) -> str:
         return f"'{path_to_wrap}'"
