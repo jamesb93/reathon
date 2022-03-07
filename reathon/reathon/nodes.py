@@ -23,7 +23,7 @@ class Node:
 
     def add(self, *nodes_to_add):
         for node in nodes_to_add:
-            if isinstance(node, self.valid_children):
+            if any(isinstance(node, x) for x in self.valid_children):
                 self.nodes.append(node)
                 node.parents.append(self) # add the self to the parents of the node
             else:
@@ -64,7 +64,7 @@ class Node:
 class Project(Node):
     def __init__(self, *nodes_to_add, **kwargs):
         self.name = 'REAPER_PROJECT'
-        self.valid_children = Track
+        self.valid_children = [Track]
         super().__init__(*nodes_to_add, **kwargs)
         self.accepted_chunks = {
             # Used for reading, these are the only chunks that will be included.
@@ -190,7 +190,7 @@ class AU(Node):
 class Track(Node):
     def __init__(self, *nodes_to_add, **kwargs):
         self.name = 'TRACK'
-        self.valid_children = (FXChain, Item)
+        self.valid_children = [FXChain, Item]
         super().__init__(*nodes_to_add, **kwargs)
 
     def get_item(self, query):
@@ -200,12 +200,12 @@ class Track(Node):
 class Item(Node):
     def __init__(self, *nodes_to_add, **kwargs):
         self.name = 'ITEM'
-        self.valid_children = Source
+        self.valid_children = [Source]
         super().__init__(*nodes_to_add, **kwargs)
 
 class Source(Node):
     def __init__(self, *nodes_to_add, **kwargs):
-        self.valid_children = Source
+        self.valid_children = [Source]
         self.extension_lookup = {
             '.wav' : 'WAVE',
             '.wave' : 'WAVE',
