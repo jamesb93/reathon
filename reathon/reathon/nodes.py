@@ -48,6 +48,10 @@ class Project(Node):
         with open(path, "w") as f:
             f.write(self.string)
 
+    def print(self):
+        self.traverse(self)
+        print(self.string)
+
 class Track(Node):
     def __init__(self, *nodes_to_add, **kwargs):
         self.name = 'TRACK'
