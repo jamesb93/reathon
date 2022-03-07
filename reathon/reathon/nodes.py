@@ -6,6 +6,7 @@ class Node:
         self.nodes = []
         self.props = []
         self.parents = []
+        self.string = ''
         self.add(*nodes_to_add)
         for prop, value in kwargs.items():
             if prop == 'file':
@@ -30,6 +31,20 @@ class Node:
             print(f'You cannot add a {node_to_add.name} to a {self.node_to_add}')
         return node_to_add
 
+    def traverse(self, origin):
+        self.string += f'<{origin.name}\n'
+
+        for state in origin.props:
+            self.string += f'{state[0]} {state[1]}\n'
+    
+        for node in origin.nodes:
+            self.traverse(node)
+        self.string += '>\n'
+
+    def print(self):
+        self.traverse(self)
+        print(self.string)
+
     @staticmethod
     def wrap_file(path_to_wrap: str) -> str:
         return f"'{path_to_wrap}'"
@@ -39,7 +54,6 @@ class Project(Node):
     def __init__(self, *nodes_to_add, **kwargs):
         self.name = 'REAPER_PROJECT'
         self.valid_children = Track
-        self.string = ''
         super().__init__(*nodes_to_add, **kwargs)
         self.accepted_chunks = {
             # Used for reading, these are the only chunks that will be included.
@@ -51,16 +65,6 @@ class Project(Node):
         } 
         if 'file' in kwargs:
             self.read(kwargs.get('file')) # If an rpp file is given, read it.
-
-    def traverse(self, origin):
-        self.string += f'<{origin.name}\n'
-
-        for state in origin.props:
-            self.string += f'{state[0]} {state[1]}\n'
-    
-        for node in origin.nodes:
-            self.traverse(node)
-        self.string += '>\n'
 
     def write(self, path):
         self.traverse(self)
@@ -151,10 +155,6 @@ class Project(Node):
                 final_array.append(removed_initial_spaces[i])
 
         return final_array
-
-    def print(self):
-        self.traverse(self)
-        print(self.string)
 
 class Track(Node):
     def __init__(self, *nodes_to_add, **kwargs):
