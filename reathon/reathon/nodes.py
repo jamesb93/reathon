@@ -97,7 +97,7 @@ class Project(Node):
             for line in f:
                 # Read through the lines in the rpp file:
                 line_array = self.line_pre_parse(line)
-                if(line_array[0][:1] == '>'):
+                if (line_array[0][:1] == '>'):
                     # Finalise object
                     current_hierarchy.pop()
                     current_parent = current_hierarchy[-1]
