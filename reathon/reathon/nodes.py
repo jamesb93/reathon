@@ -56,10 +56,6 @@ class Node:
             self.traverse(node)
         self.string += '>\n'
 
-    def print(self):
-        self.traverse(self)
-        print(self.string)
-
     @staticmethod
     def wrap_file(path_to_wrap: str) -> str:
         return f"'{path_to_wrap}'"
@@ -112,7 +108,7 @@ class Project(Node):
                         
                         if(this_chunk in self.accepted_chunks):
                             accepted_chunk = self.accepted_chunks[this_chunk]()
-                            current_parent.add_single(accepted_chunk)
+                            current_parent.add(accepted_chunk)
                             current_parent = accepted_chunk
                             current_hierarchy.append(current_parent)
                         else:
