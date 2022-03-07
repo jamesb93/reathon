@@ -71,6 +71,22 @@ class Project(Node):
         with open(path, "w") as f:
             f.write(self.string)
 
+    def get_track(self, query):
+        # Get track in project either by index or track name:
+        try:
+            query = int(query)
+            if query < len(self.nodes):
+                return self.nodes[query]
+            else:
+                return None
+        except ValueError:
+            to_return = None
+            for i in range(len(self.nodes)):
+                for j in range(len(self.nodes[i].props)):
+                    if self.nodes[i].props[j][0] == 'NAME' and self.nodes[i].props[j][1] == query:
+                        to_return = self.nodes[i]
+            return to_return
+
     def read(self, path):
         # Read an rpp file
         self.nodes = [] # Reinit nodes.
