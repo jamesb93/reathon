@@ -198,7 +198,3 @@ class Source(Node):
             self.name = f'SOURCE {self.extension_lookup[ext]}'
         except KeyError:
             self.name = 'SOURCE SECTION'
-
-
-
-
