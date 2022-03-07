@@ -172,10 +172,25 @@ class Project(Node):
 
         return final_array
 
+class FXChain(Node):
+    def __init__(self, *nodes_to_add, **kwargs):
+        self.name = 'FXCHAIN'
+        super().__init__(*nodes_to_add, **kwargs)
+
+class VST(Node):
+    def __init__(self, *nodes_to_add, **kwargs):
+        self.name = 'VST'
+        super().__init__(*nodes_to_add, **kwargs)
+
+class AU(Node):
+    def __init__(self, *nodes_to_add, **kwargs):
+        self.name = 'AU'
+        super().__init__(*nodes_to_add, **kwargs)
+
 class Track(Node):
     def __init__(self, *nodes_to_add, **kwargs):
         self.name = 'TRACK'
-        self.valid_children = Item
+        self.valid_children = (FXChain, Item)
         super().__init__(*nodes_to_add, **kwargs)
 
     def get_item(self, query):
