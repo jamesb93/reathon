@@ -55,18 +55,27 @@ class Node:
                         to_return = self.nodes[i]
             return to_return
 
-    def traverse(self, origin):
-
+    def traverse(self, origin, this_level = 0):
+        this_spaceing = ''
+        this_spaceing_props = ''
+        for i in range(this_level):
+            this_spaceing = this_spaceing + '  '
+        for i in range(this_level + 1):
+            this_spaceing_props = this_spaceing_props + '  '
+        
+        self.string += this_spaceing
         if origin.meta_props != None:
             self.string += f'<{origin.name} {origin.meta_props}\n'
         else:
             self.string += f'<{origin.name}\n'
 
         for state in origin.props:
+            self.string += this_spaceing_props
             self.string += f'{state[0]} {state[1]}\n'
     
         for node in origin.nodes:
-            self.traverse(node)
+            self.traverse(node, this_level = this_level + 1)
+        self.string += this_spaceing
         self.string += '>\n'
 
     @staticmethod
