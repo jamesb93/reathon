@@ -3,6 +3,11 @@ from reathon.exceptions import InvalidNodeMethod
 
 class Node:
     def __init__(self, *nodes_to_add, **kwargs):
+        if 'node_name' in kwargs:
+            self.name = kwargs.get('node_name')
+        else:
+            self.name = 'UNTITLED'
+        self.valid_children = [Node, Track, Item, Source, FXChain, AU, VST]
         self.nodes = []
         self.props = []
         self.parents = []
@@ -11,7 +16,8 @@ class Node:
         for prop, value in kwargs.items():
             if prop == 'file':
                 value = self.wrap_file(value)
-            self.props.append([prop.upper(), str(value)])
+            if prop != 'node_name':
+                self.props.append([prop.upper(), str(value)])
 
     def __repr__(self):
         return "Node()"
@@ -19,7 +25,6 @@ class Node:
     def __str__(self):
         self.traverse(self)
         return self.string
-
 
     def add(self, *nodes_to_add):
         for node in nodes_to_add:
@@ -60,12 +65,11 @@ class Node:
     def wrap_file(path_to_wrap: str) -> str:
         return f"'{path_to_wrap}'"
 
-
 class Project(Node):
     def __init__(self, *nodes_to_add, **kwargs):
-        self.name = 'REAPER_PROJECT'
-        self.valid_children = [Track]
         super().__init__(*nodes_to_add, **kwargs)
+        self.name = 'REAPER_PROJECT'
+        self.valid_children = [Node, Track]
         self.accepted_chunks = {
             # Used for reading, these are the only chunks that will be included.
             # Each included chunk must have a corresponding class that it will be created as.
@@ -94,13 +98,15 @@ class Project(Node):
         current_parent = self 
         current_hierarchy = [self]
         with open(path, 'r') as f:
+            next(f)
             for line in f:
                 # Read through the lines in the rpp file:
                 line_array = self.line_pre_parse(line)
                 if (line_array[0][:1] == '>'):
                     # Finalise object
-                    current_hierarchy.pop()
-                    current_parent = current_hierarchy[-1]
+                    if len(current_hierarchy) != 1:
+                        current_hierarchy.pop()
+                        current_parent = current_hierarchy[-1]
                 else:
                     if(line_array[0][:1] == '<'):
                         # New Object start
@@ -108,18 +114,17 @@ class Project(Node):
                         
                         if(this_chunk in self.accepted_chunks):
                             accepted_chunk = self.accepted_chunks[this_chunk]()
-                            current_parent.add(accepted_chunk)
-                            current_parent = accepted_chunk
-                            current_hierarchy.append(current_parent)
                         else:
-                            current_hierarchy.append(current_parent)
+                            accepted_chunk = Node(node_name=this_chunk)
+
+                        current_parent.add(accepted_chunk)
+                        current_parent = accepted_chunk
+                        current_hierarchy.append(current_parent)
                     else:
                         # Add property to current obj:
-                        for allowed in self.accepted_chunks:
-                            if isinstance(current_parent, self.accepted_chunks[allowed]):
-                                current_parent.props.append(self.parse_prop(line_array))
-                            if isinstance(current_parent, Source) and self.parse_prop(line_array)[0] == 'FILE':
-                                current_parent.set_file(self.parse_prop(line_array)[1])     
+                        current_parent.props.append(self.parse_prop(line_array))
+                        if isinstance(current_parent, Source) and self.parse_prop(line_array)[0] == 'FILE':
+                            current_parent.set_file(self.parse_prop(line_array)[1])  
             
     def parse_prop(self, full_line):
         return_array = []
@@ -174,24 +179,26 @@ class Project(Node):
 
 class FXChain(Node):
     def __init__(self, *nodes_to_add, **kwargs):
-        self.name = 'FXCHAIN'
         super().__init__(*nodes_to_add, **kwargs)
+        self.name = 'FXCHAIN'
 
 class VST(Node):
     def __init__(self, *nodes_to_add, **kwargs):
-        self.name = 'VST'
         super().__init__(*nodes_to_add, **kwargs)
+        self.name = 'VST'
 
 class AU(Node):
     def __init__(self, *nodes_to_add, **kwargs):
-        self.name = 'AU'
         super().__init__(*nodes_to_add, **kwargs)
+        self.name = 'AU'
+        
 
 class Track(Node):
     def __init__(self, *nodes_to_add, **kwargs):
-        self.name = 'TRACK'
-        self.valid_children = [FXChain, Item]
         super().__init__(*nodes_to_add, **kwargs)
+        self.name = 'TRACK'
+        self.valid_children = [Node, FXChain, Item]
+        
 
     def get_item(self, query):
         # Get track in project either by index or track name:
@@ -199,13 +206,14 @@ class Track(Node):
         
 class Item(Node):
     def __init__(self, *nodes_to_add, **kwargs):
-        self.name = 'ITEM'
-        self.valid_children = [Source]
         super().__init__(*nodes_to_add, **kwargs)
+        self.name = 'ITEM'
+        self.valid_children = [Node, Source]
 
 class Source(Node):
     def __init__(self, *nodes_to_add, **kwargs):
-        self.valid_children = [Source]
+        super().__init__(*nodes_to_add, **kwargs)
+        self.valid_children = [Node, Source]
         self.extension_lookup = {
             '.wav' : 'WAVE',
             '.wave' : 'WAVE',
@@ -220,7 +228,6 @@ class Source(Node):
             self.process_extension()
         else:
             self.name = 'SOURCE'
-        super().__init__(*nodes_to_add, **kwargs)
 
     def set_file(self, path):
         # Allow for setting of the file from elsewhere.
