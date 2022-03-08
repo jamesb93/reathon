@@ -40,35 +40,29 @@ class Node:
         return self
 
     def get_children(self, type_query = 'Node'):
-        to_return = []
-        for i in range(len(self.nodes)):
-            if type(self.nodes[i]) == type_query:
-                to_return.append(self.nodes[i])
+        children = []
+        for node in self.nodes:
+            if type(node) == type_query:
+                children.append(node)
         
-        return to_return
+        return children
 
     def traverse(self, origin, this_level = 0):
-        this_spaceing = ''
-        this_spaceing_props = ''
-        for i in range(this_level):
-            this_spaceing = this_spaceing + '  '
-        for i in range(this_level + 1):
-            this_spaceing_props = this_spaceing_props + '  '
+        indent = ''
+        for _ in range(this_level):
+            indent += '  '
         
-        self.string += this_spaceing
         if origin.meta_props != None:
-            self.string += f'<{origin.name} {origin.meta_props}\n'
+            self.string += f'{indent}<{origin.name} {origin.meta_props}\n'
         else:
-            self.string += f'<{origin.name}\n'
+            self.string += f'{indent}<{origin.name}\n'
 
         for state in origin.props:
-            self.string += this_spaceing_props
-            self.string += f'{state[0]} {state[1]}\n'
+            self.string += f'{indent}  {state[0]} {state[1]}\n'
     
         for node in origin.nodes:
             self.traverse(node, this_level = this_level + 1)
-        self.string += this_spaceing
-        self.string += '>\n'
+        self.string += indent + '>\n'
 
     @staticmethod
     def wrap_file(path_to_wrap: str) -> str:
@@ -103,55 +97,58 @@ class Project(Node):
         self.nodes = [] # Reinit nodes.
         self.props = [] # Reinit props.
 
+        # The first element will always be a project, and it is already created:
         current_parent = self 
         current_hierarchy = [self]
         with open(path, 'r') as f:
+            # The first line is the project, so just add it's meta_props if there are any:
             first_line = f.readline()
             line_array = self.line_pre_parse(first_line)
             project_meta_props = self.get_metaprops(line_array)
             self.meta_props = project_meta_props
+            
+            # Now read through the rest of the file:
             for line in f:
                 # Read through the lines in the rpp file:
                 line_array = self.line_pre_parse(line)
                 if (line_array[0][:1] == '>'):
-                    # Finalise object
-                    if len(current_hierarchy) != 1:
+                    # Closing a chunk:
+                    if len(current_hierarchy) != 1: # Skip the last line (the project) as it was never opened!
                         current_hierarchy.pop()
                         current_parent = current_hierarchy[-1]
                 else:
                     if(line_array[0][:1] == '<'):
-                        # New Object start
+                        # New chunk start
                         this_chunk = line_array[0][1:].replace('\n', '')
 
-                        found_meta_props = self.get_metaprops(line_array)
-
                         if(this_chunk in self.accepted_chunks):
-                            accepted_chunk = self.accepted_chunks[this_chunk](meta_props = found_meta_props)
+                            accepted_chunk = self.accepted_chunks[this_chunk](meta_props = self.get_metaprops(line_array))
                         else:
-                            accepted_chunk = Node(node_name = this_chunk, meta_props = found_meta_props)
+                            accepted_chunk = Node(node_name = this_chunk, meta_props = self.get_metaprops(line_array))
 
                         current_parent.add(accepted_chunk)
                         current_parent = accepted_chunk
                         current_hierarchy.append(current_parent)
                     else:
-                        # Add property to current obj:
+                        # Add a property to the current parent:
                         current_parent.props.append(self.parse_prop(line_array))
                         if isinstance(current_parent, Source) and self.parse_prop(line_array)[0] == 'FILE':
                             current_parent.set_file(self.parse_prop(line_array)[1])  
 
     def get_metaprops(self, full_line):
+        # Parse meta props. 
+        # I tried combining this with parse_prop(), however the many sublte differences made it a nightmare.
         if len(full_line) == 1:
             return None
         else:
             prop_string = ''
             for i in range(len(full_line)):
                 if i != 0:
-                    prop_string = prop_string + full_line[i].replace('\n', '')
+                    prop_string += full_line[i].replace('\n', '')
                     if i != len(full_line) -1:
-                        prop_string = prop_string + ' '
+                        prop_string += ' '
             return prop_string
 
-        
     def parse_prop(self, full_line):
         return_array = []
         prop_string = ''
@@ -175,31 +172,31 @@ class Project(Node):
         can_push = False
 
         # Remove preceeding empty entries:
-        for i in range(len(initial_line_list)):
-            if(can_push == False and initial_line_list[i] != ''):
+        for element in initial_line_list:
+            if(can_push == False and element != ''):
                 can_push = True
             if(can_push):
-                removed_initial_spaces.append(initial_line_list[i])
+                removed_initial_spaces.append(element)
 
         # Stick strings back together:
         adding_string = False
         current_string = ''
-        for i in range(len(removed_initial_spaces)):
-            if('"' in removed_initial_spaces[i]): 
-                last_char = removed_initial_spaces[i].replace('\n', '')[-1]
-                if(removed_initial_spaces[i][0] == '"' and last_char == '"'):
-                    final_array.append(removed_initial_spaces[i])
-                elif(removed_initial_spaces[i][0] == '"'):
+        for element in removed_initial_spaces:
+            if('"' in element): 
+                last_char = element.replace('\n', '')[-1]
+                if(element[0] == '"' and last_char == '"'):
+                    final_array.append(element)
+                elif(element[0] == '"'):
                     adding_string = True
-                    current_string = removed_initial_spaces[i]
+                    current_string = element
                 elif(adding_string == True and last_char == '"'):
-                    current_string = current_string + ' ' + removed_initial_spaces[i]
+                    current_string = current_string + ' ' + element
                     final_array.append(current_string)
                     adding_string = False
             elif(adding_string == True):
-                current_string = current_string + ' ' + removed_initial_spaces[i]
+                current_string = current_string + ' ' + element
             else:
-                final_array.append(removed_initial_spaces[i])
+                final_array.append(element)
 
         return final_array
 
