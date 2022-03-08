@@ -39,21 +39,13 @@ class Node:
                 print(f'You cannot add a {node.name} to a {self.name}')
         return self
 
-    def get_child(self, query):
-        # Get child by index or propriety 'NAME':
-        try:
-            query = int(query)
-            if query < len(self.nodes):
-                return self.nodes[query]
-            else:
-                return None
-        except ValueError:
-            to_return = None
-            for i in range(len(self.nodes)):
-                for j in range(len(self.nodes[i].props)):
-                    if self.nodes[i].props[j][0].upper() == 'NAME' and self.nodes[i].props[j][1] == query:
-                        to_return = self.nodes[i]
-            return to_return
+    def get_children(self, type_query = 'Node'):
+        to_return = []
+        for i in range(len(self.nodes)):
+            if type(self.nodes[i]) == type_query:
+                to_return.append(self.nodes[i])
+        
+        return to_return
 
     def traverse(self, origin, this_level = 0):
         this_spaceing = ''
@@ -102,9 +94,9 @@ class Project(Node):
         with open(path, "w") as f:
             f.write(self.string)
 
-    def get_track(self, query):
+    def get_tracks(self):
         # Get track in project either by index or track name:
-        return super().get_child(query)
+        return super().get_children(type_query = Track)
 
     def read(self, path):
         # Read an rpp file
@@ -234,9 +226,9 @@ class Track(Node):
         self.valid_children = [Node, FXChain, Item]
         
 
-    def get_item(self, query):
+    def get_items(self, query):
         # Get track in project either by index or track name:
-        return super().get_child(query)
+        super().get_children(type_query = Item)
         
 class Item(Node):
     def __init__(self, *nodes_to_add, **kwargs):
