@@ -105,7 +105,10 @@ class Project(Node):
         current_parent = self 
         current_hierarchy = [self]
         with open(path, 'r') as f:
-            next(f)
+            first_line = f.readline()
+            line_array = self.line_pre_parse(first_line)
+            project_meta_props = self.get_metaprops(line_array)
+            self.meta_props = project_meta_props
             for line in f:
                 # Read through the lines in the rpp file:
                 line_array = self.line_pre_parse(line)
