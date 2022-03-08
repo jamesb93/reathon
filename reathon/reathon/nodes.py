@@ -7,6 +7,10 @@ class Node:
             self.name = kwargs.get('node_name')
         else:
             self.name = 'UNTITLED'
+        if 'meta_props' in kwargs:
+            self.meta_props = kwargs.get('meta_props')
+        else:
+            self.meta_props = None
         self.valid_children = [Node, Track, Item, Source, FXChain, AU, VST]
         self.nodes = []
         self.props = []
@@ -16,7 +20,7 @@ class Node:
         for prop, value in kwargs.items():
             if prop == 'file':
                 value = self.wrap_file(value)
-            if prop != 'node_name':
+            if prop != 'node_name' and prop != 'meta_props':
                 self.props.append([prop.upper(), str(value)])
 
     def __repr__(self):
@@ -52,7 +56,11 @@ class Node:
             return to_return
 
     def traverse(self, origin):
-        self.string += f'<{origin.name}\n'
+
+        if origin.meta_props != None:
+            self.string += f'<{origin.name} {origin.meta_props}\n'
+        else:
+            self.string += f'<{origin.name}\n'
 
         for state in origin.props:
             self.string += f'{state[0]} {state[1]}\n'
@@ -71,15 +79,14 @@ class Project(Node):
         self.name = 'REAPER_PROJECT'
         self.valid_children = [Node, Track]
         self.accepted_chunks = {
-            # Used for reading, these are the only chunks that will be included.
-            # Each included chunk must have a corresponding class that it will be created as.
+            # when reading if the chunk is not in this name/class pair, a generic node will be created with name='CHUNK'.
             'PROJECT' : Project,
             'TRACK' : Track,
             'ITEM' : Item,
             'SOURCE' : Source
         } 
         if 'file' in kwargs:
-            self.read(kwargs.get('file')) # If an rpp file is given, read it.
+            self.read(kwargs.get('file'))
 
     def write(self, path):
         self.traverse(self)
@@ -111,11 +118,13 @@ class Project(Node):
                     if(line_array[0][:1] == '<'):
                         # New Object start
                         this_chunk = line_array[0][1:].replace('\n', '')
-                        
+
+                        found_meta_props = self.get_metaprops(line_array)
+
                         if(this_chunk in self.accepted_chunks):
-                            accepted_chunk = self.accepted_chunks[this_chunk]()
+                            accepted_chunk = self.accepted_chunks[this_chunk](meta_props = found_meta_props)
                         else:
-                            accepted_chunk = Node(node_name=this_chunk)
+                            accepted_chunk = Node(node_name = this_chunk, meta_props = found_meta_props)
 
                         current_parent.add(accepted_chunk)
                         current_parent = accepted_chunk
@@ -125,7 +134,20 @@ class Project(Node):
                         current_parent.props.append(self.parse_prop(line_array))
                         if isinstance(current_parent, Source) and self.parse_prop(line_array)[0] == 'FILE':
                             current_parent.set_file(self.parse_prop(line_array)[1])  
-            
+
+    def get_metaprops(self, full_line):
+        if len(full_line) == 1:
+            return None
+        else:
+            prop_string = ''
+            for i in range(len(full_line)):
+                if i != 0:
+                    prop_string = prop_string + full_line[i].replace('\n', '')
+                    if i != len(full_line) -1:
+                        prop_string = prop_string + ' '
+            return prop_string
+
+        
     def parse_prop(self, full_line):
         return_array = []
         prop_string = ''
@@ -237,6 +259,6 @@ class Source(Node):
     def process_extension(self):
         ext = Path(self.file.replace('"', '')).suffix
         try:
-            self.name = f'SOURCE {self.extension_lookup[ext]}'
+            self.meta_props = self.extension_lookup[ext]
         except KeyError:
-            self.name = 'SOURCE SECTION'
+            self.meta_props = 'SECTION'
