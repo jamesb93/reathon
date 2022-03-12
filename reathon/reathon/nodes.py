@@ -237,6 +237,7 @@ class Source(Node):
     def __init__(self, *nodes_to_add, **kwargs):
         super().__init__(*nodes_to_add, **kwargs)
         self.valid_children = [Node, Source]
+        self.name = 'SOURCE'
         self.extension_lookup = {
             '.wav' : 'WAVE',
             '.wave' : 'WAVE',
@@ -247,10 +248,8 @@ class Source(Node):
         }
         # Only do the source parsing if it is given:
         if 'file' in kwargs:
-            self.file = kwargs.get('file')
+            self.file = kwargs.get('file')      
             self.process_extension()
-        else:
-            self.name = 'SOURCE'
 
     def set_file(self, path):
         # Allow for setting of the file from elsewhere.
