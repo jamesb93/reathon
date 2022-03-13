@@ -110,6 +110,11 @@ class Project(Node):
         # Get track in project either by index or track name:
         return super().get_children(type_query = Track)
 
+    def set_transport_info(self, key, val):
+        self.transport_info[key] = val
+        self.replace_prop('TEMPO', str(self.transport_info["bpm"]) + ' ' + str(self.transport_info["time_sig_top"]) + ' ' + str(self.transport_info["time_sig_bottom"]))
+        self.replace_prop('SAMPLERATE', str(self.transport_info["sample_rate"]))
+
     def read(self, path):
         # Read an rpp file
         self.nodes = [] # Reinit nodes.
