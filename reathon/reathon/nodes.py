@@ -21,7 +21,7 @@ class Node:
             if prop == 'file':
                 value = self.wrap_file(value)
             if prop != 'node_name' and prop != 'meta_props':
-                self.replace_prop(prop.upper(), str(value))
+                self.props.append([prop.upper(), str(value)])
 
     def replace_prop(self, prop_key, prop_value):
         replaced = False
@@ -154,7 +154,8 @@ class Project(Node):
                         current_hierarchy.append(current_parent)
                     else:
                         # Add a property to the current parent:
-                        current_parent.replace_prop(self.parse_prop(line_array)[0], self.parse_prop(line_array)[1])
+                        current_parent.props.append(self.parse_prop(line_array))
+
                         if isinstance(current_parent, Source) and self.parse_prop(line_array)[0] == 'FILE':
                             current_parent.set_file(self.parse_prop(line_array)[1])  
 
