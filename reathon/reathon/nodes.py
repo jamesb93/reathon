@@ -21,7 +21,7 @@ class Node:
             if prop == 'file':
                 value = self.wrap_file(value)
             if prop != 'node_name' and prop != 'meta_props':
-                self.props.append([prop.upper(), str(value)])
+                self.replace_prop(prop.upper(), str(value))
 
     def replace_prop(self, prop_key, prop_value):
         replaced = False
@@ -89,8 +89,8 @@ class Project(Node):
             "time_sig_bottom" : 4,
             "sample_rate" : 44100
         }
-        self.props.append('TEMPO 120 4 4')
-        self.props.append('SAMPLERATE 44100')
+        self.replace_prop('TEMPO', '120 4 4')
+        self.replace_prop('SAMPLERATE', '44100')
         self.accepted_chunks = {
             # when reading if the chunk is not in this name/class pair, a generic node will be created with name='CHUNK'.
             'PROJECT' : Project,
