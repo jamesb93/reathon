@@ -233,6 +233,83 @@ class Project(Node):
 
         return final_array
 
+    def beat_to_midi(self, beat):
+        return beat * 960
+
+    def beat_to_reaper(self, beat):
+        return beat * 0.5
+
+    def beat_to_ms(self, beat):
+        return (beat * (60000 / self.transport_info["bpm"])) / (self.transport_info["time_sig_bottom"] * 0.25)
+
+    def ms_to_samps(self, ms):
+        return ms * (self.transport_info["sample_rate"] / 1000)
+
+    def midi_to_beat(self, midi):
+        return midi / 960
+
+    def ms_to_beat(self,ms):
+        return (ms * (self.transport_info["time_sig_bottom"] * 0.25)) / (60000 / self.transport_info["bpm"])
+
+    def samps_to_ms(self, samps):
+        return samps / (self.transport_info["sample_rate"] / 1000)
+
+    def time_convert(self, source_type, target_type, value):
+        if source_type == 'beat':
+            if target_type == 'midi':
+                return self.beat_to_midi(value)
+            elif target_type == 'reaper':
+                return self.beat_to_reaper(value)
+            elif target_type == 'ms':
+                return self.beat_to_ms(value)
+            elif target_type == 'samps':
+                return self.ms_to_samps(self.beat_to_ms(value))
+
+        elif source_type == 'midi':
+            this_beat = self.midi_to_beat(value)
+            if target_type == 'beat':
+                return this_beat
+            elif target_type == 'reaper':
+                return self.beat_to_reaper(this_beat)
+            elif target_type == 'ms':
+                return self.beat_to_ms(this_beat)
+            elif target_type == 'samps':
+                return self.ms_to_samps(self.beat_to_ms(this_beat))
+
+        elif source_type == 'reaper':
+            this_beat = self.reaper_to_beat(value)
+            if target_type == 'beat':
+                return this_beat
+            elif target_type == 'midi':
+                return self.beat_to_midi(this_beat)
+            elif target_type == 'ms':
+                return self.beat_to_ms(this_beat)
+            elif target_type == 'samps':
+                return self.ms_to_samps(self.beat_to_ms(this_beat))
+        
+        elif source_type == 'ms':
+            this_beat = self.ms_to_beat(value)
+            if target_type == 'beat':
+                return this_beat
+            elif target_type == 'midi':
+                return self.beat_to_midi(this_beat)
+            elif target_type == 'reaper':
+                return self.beat_to_reaper(this_beat)
+            elif target_type == 'samps':
+                return self.ms_to_samps(self.beat_to_ms(this_beat))
+
+        elif source_type == 'samps':
+            this_ms = self.samps_to_ms(value);
+            this_beat = self.ms_to_beat(this_ms);
+            if target_type == 'ms':
+                return this_ms
+            elif target_type == 'beat':
+                return this_beat
+            elif target_type == 'midi':
+                return self.beat_to_midi(this_beat)
+            elif target_type == 'reaper':
+                return self.beat_to_reaper(this_beat)
+
 class FXChain(Node):
     def __init__(self, *nodes_to_add, **kwargs):
         super().__init__(*nodes_to_add, **kwargs)
