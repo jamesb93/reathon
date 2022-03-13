@@ -240,19 +240,22 @@ class Project(Node):
         return beat * 0.5
 
     def beat_to_ms(self, beat):
-        return (beat * (60000 / self.transport_info["bpm"])) / (self.transport_info["time_sig_bottom"] * 0.25)
+        return (beat * (60000.0 / float(self.transport_info["bpm"]))) / (float(self.transport_info["time_sig_bottom"]) * 0.25)
 
     def ms_to_samps(self, ms):
-        return ms * (self.transport_info["sample_rate"] / 1000)
+        return ms * (float(self.transport_info["sample_rate"]) / 1000.0)
 
     def midi_to_beat(self, midi):
         return midi / 960
 
-    def ms_to_beat(self,ms):
-        return (ms * (self.transport_info["time_sig_bottom"] * 0.25)) / (60000 / self.transport_info["bpm"])
+    def ms_to_beat(self, ms):
+        return (ms * (float(self.transport_info["time_sig_bottom"]) * 0.25)) / (60000.0 / float(self.transport_info["bpm"]))
 
     def samps_to_ms(self, samps):
-        return samps / (self.transport_info["sample_rate"] / 1000)
+        return samps / (float(self.transport_info["sample_rate"]) / 1000.0)
+
+    def reaper_to_beat(self, reaper):
+        return reaper * 2
 
     def time_convert(self, source_type, target_type, value):
         if source_type == 'beat':
