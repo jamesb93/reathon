@@ -73,6 +73,12 @@ class Project(Node):
         super().__init__(*nodes_to_add, **kwargs)
         self.name = 'REAPER_PROJECT'
         self.valid_children = [Node, Track]
+        self.transport_info = {
+            "bpm" : 120,
+            "time_sig_top" : 4,
+            "time_sig_bottom" : 4,
+            "sample_rate" : 44100
+        }
         self.accepted_chunks = {
             # when reading if the chunk is not in this name/class pair, a generic node will be created with name='CHUNK'.
             'PROJECT' : Project,
@@ -134,6 +140,14 @@ class Project(Node):
                         current_parent.props.append(self.parse_prop(line_array))
                         if isinstance(current_parent, Source) and self.parse_prop(line_array)[0] == 'FILE':
                             current_parent.set_file(self.parse_prop(line_array)[1])  
+
+                        # Update transport info:
+                        if isinstance(current_parent, Project) and self.parse_prop(line_array)[0] == 'TEMPO':
+                            self.transport_info["bpm"] = line_array[1]
+                            self.transport_info["time_sig_top"] = line_array[2]
+                            self.transport_info["time_sig_bottom"] = line_array[3]
+                        if isinstance(current_parent, Project) and self.parse_prop(line_array)[0] == 'SAMPLERATE':
+                            self.transport_info["sample_rate"] = line_array[1]
 
     def get_metaprops(self, full_line):
         # Parse meta props. 
