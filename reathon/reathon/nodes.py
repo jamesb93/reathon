@@ -23,6 +23,16 @@ class Node:
             if prop != 'node_name' and prop != 'meta_props':
                 self.props.append([prop.upper(), str(value)])
 
+    def replace_prop(self, prop_key, prop_value):
+        replaced = False
+        for prop in self.props:
+            if prop[0] == prop_key.upper():
+                self.props.remove(prop)
+                self.props.append([prop_key.upper(), str(prop_value)])
+                replaced = True
+        if replaced == False:
+            self.props.append([prop_key.upper(), str(prop_value)])
+
     def __repr__(self):
         return "Node()"
 
@@ -79,6 +89,8 @@ class Project(Node):
             "time_sig_bottom" : 4,
             "sample_rate" : 44100
         }
+        self.props.append('TEMPO 120 4 4')
+        self.props.append('SAMPLERATE 44100')
         self.accepted_chunks = {
             # when reading if the chunk is not in this name/class pair, a generic node will be created with name='CHUNK'.
             'PROJECT' : Project,
@@ -137,7 +149,7 @@ class Project(Node):
                         current_hierarchy.append(current_parent)
                     else:
                         # Add a property to the current parent:
-                        current_parent.props.append(self.parse_prop(line_array))
+                        current_parent.replace_prop(self.parse_prop(line_array)[0], self.parse_prop(line_array)[1])
                         if isinstance(current_parent, Source) and self.parse_prop(line_array)[0] == 'FILE':
                             current_parent.set_file(self.parse_prop(line_array)[1])  
 
@@ -146,6 +158,7 @@ class Project(Node):
                             self.transport_info["bpm"] = line_array[1]
                             self.transport_info["time_sig_top"] = line_array[2]
                             self.transport_info["time_sig_bottom"] = line_array[3]
+                            
                         if isinstance(current_parent, Project) and self.parse_prop(line_array)[0] == 'SAMPLERATE':
                             self.transport_info["sample_rate"] = line_array[1]
 
