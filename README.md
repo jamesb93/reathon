@@ -1,5 +1,9 @@
 # reathon
 
+<p align="center">
+<img src="http://assets.jb.imap.cc/reathon.jpg" alt="reacoma_logo" width="25%" height="25%">
+</p>
+
 `reathon` is a python package for constructing REAPER session with native python constructs. The majority of the interface is a reflection of the `.rpp` file structure which itself is very similar to `.xml` with tags and elements (except each element is called a 'chunk'). As such, you may need to know a bit about the underlying structure of REAPER's file format before using something like this. A good way to do this is to make a REAPER project and open the project in a text editor. You might also refer to [this document](https://github.com/ReaTeam/Doc/blob/master/State%20Chunk%20Definitions) which is fairly exhaustive.
 
 ## installation
