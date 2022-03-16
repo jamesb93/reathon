@@ -228,12 +228,12 @@ class Project(Node):
             if('"' in element): 
                 last_char = element.replace('\n', '')[-1]
                 if(element[0] == '"' and last_char == '"'):
-                    final_array.append(element)
+                    final_array.append(element.replace('\n', '')[1:-1])
                 elif(element[0] == '"'):
                     adding_string = True
-                    current_string = element
+                    current_string = element[1:]
                 elif(adding_string == True and last_char == '"'):
-                    current_string = current_string + ' ' + element
+                    current_string = current_string + ' ' + element.replace('\n', '')[-1]
                     final_array.append(current_string)
                     adding_string = False
             elif(adding_string == True):
