@@ -49,8 +49,9 @@ class Node:
                 print(f'You cannot add a {node.name} to a {self.name}')
         return self
 
-    def get_children(self, type_query = 'Node'):
+    def get_children(self, **kwargs):
         children = []
+        type_query = kwargs.get('type_query', Node)
         for node in self.nodes:
             if type(node) == type_query:
                 children.append(node)
@@ -333,13 +334,12 @@ class Track(Node):
     def __init__(self, *nodes_to_add, **kwargs):
         super().__init__(*nodes_to_add, **kwargs)
         self.name = 'TRACK'
-        self.valid_children = [Node, FXChain, Item]
+        self.valid_children = [FXChain, Item, Node]
         
-
-    def get_items(self, query):
+    def get_items(self):
         # Get track in project either by index or track name:
-        super().get_children(type_query = Item)
-        
+        return super().get_children(type_query = Item)
+         
 class Item(Node):
     def __init__(self, *nodes_to_add, **kwargs):
         super().__init__(*nodes_to_add, **kwargs)
