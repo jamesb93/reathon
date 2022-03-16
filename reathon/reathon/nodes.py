@@ -33,6 +33,15 @@ class Node:
         if replaced == False:
             self.props.append([prop_key.upper(), str(prop_value)])
 
+    def get_prop(self, prop_key):
+        to_return = None
+
+        for prop in self.props:
+            if prop[0].upper() == prop_key.upper():
+                to_return =  prop[1]
+
+        return to_return
+
     def __repr__(self):
         return "Node()"
 
@@ -345,6 +354,14 @@ class Item(Node):
         super().__init__(*nodes_to_add, **kwargs)
         self.name = 'ITEM'
         self.valid_children = [Node, Source]
+
+    def get_source(self):
+        to_return = None
+        for node in self.nodes:
+            if type(node) == Source:
+                to_return = node
+        
+        return to_return
 
 class Source(Node):
     def __init__(self, *nodes_to_add, **kwargs):
