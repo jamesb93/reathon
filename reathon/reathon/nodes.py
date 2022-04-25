@@ -1,5 +1,6 @@
 from pathlib import Path
 from reathon.exceptions import InvalidNodeMethod
+from reathon.helper import region, marker
 
 class Node:
     def __init__(self, *nodes_to_add, **kwargs):
@@ -48,6 +49,15 @@ class Project(Node):
         with open(path, "w") as f:
             f.write(self.string)
 
+    def add_marker(self, index:int, time:float, name:str, color:int = 0):
+        new_marker = marker(index, time, name, color)
+        self.props.append(new_marker)
+
+    def add_region(self, index:int, start:float, end:float, name:str, color:int=0):
+        new_region = region(index, start, end, name, color)
+        self.props.extend(new_region)
+
+    
 class Track(Node):
     def __init__(self, *nodes_to_add, **kwargs):
         self.name = 'TRACK'
@@ -81,7 +91,3 @@ class Source(Node):
             self.name = f'SOURCE {self.extension_lookup[ext]}'
         except KeyError:
             self.name = 'SOURCE SECTION'
-
-
-
-
