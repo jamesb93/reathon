@@ -14,8 +14,11 @@ proj = Project(
 
 proj.props.extend([
     marker(1, 0, 'first'),
-    marker(2, 0.5, 'second', make_color(0, 255, 0))] # with custom color
-    + region(3, 1, 5, "region", make_color(0, 150, 150))) # add region with custom color
+    marker(2, 0.5, 'second', make_color(0, 255, 0))  # with custom color
+])
+
+# or
+
+proj.add_marker(3, 1.0, 'third')
 
 proj.write('markers.rpp')
-
