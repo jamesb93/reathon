@@ -86,7 +86,9 @@ class Source(Node):
         super().__init__(*nodes_to_add, **kwargs)
 
     def process_extension(self):
-        ext = Path(self.file).suffix
+        if not isinstance(self.file, Path):
+            self.file = Path(self.file)
+        ext = self.file.suffix
         try:
             self.name = f'SOURCE {self.extension_lookup[ext]}'
         except KeyError:
