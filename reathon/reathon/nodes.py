@@ -46,7 +46,7 @@ class Project(Node):
 
     def write(self, path):
         self.traverse(self)
-        with open(path, "w") as f:
+        with open(path, "w", encoding="utf-8") as f:
             f.write(self.string)
 
     def add_marker(self, index:int, time:float, name:str, color:int = 0):
