@@ -79,7 +79,8 @@ class Source(Node):
             '.aiff' : 'WAVE',
             '.aif' : 'WAVE',
             '.mp3' : 'MP3',
-            '.ogg' : 'VORBIS'
+            '.ogg' : 'VORBIS',
+            '.flac': 'FLAC',
         }
         self.file = kwargs.get('file')
         self.process_extension()
