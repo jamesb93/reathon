@@ -114,7 +114,7 @@ project.write("properties1.rpp") # write the project out to the path
 """
 setup(
     name="reathon",
-    version="0.0.6",
+    version="0.0.7",
     author="James Bradbury",
     url="https://github.com/jamesb93/reathon",
     license="GLPv3+",
