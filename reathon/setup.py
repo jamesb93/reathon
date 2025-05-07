@@ -122,5 +122,5 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     description="Construct REAPER projects in Python.",
-    packages=find_packages()
+    packages=find_packages(),
 )
