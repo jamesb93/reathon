@@ -9,9 +9,9 @@ class Node:
         self.parents = []
         self.add(*nodes_to_add)
         for prop, value in kwargs.items():
-            if prop == 'file':
-                value = self.wrap_file(value)
-            self.props.append([prop.upper(), str(value)])
+            if isinstance(value, str):
+                value = f'"{value}"'
+            self.props.append([prop.upper(), value])
 
     def add(self, *nodes_to_add):
         for node in nodes_to_add:
@@ -21,10 +21,6 @@ class Node:
             else:
                 print(f'You cannot add a {node.name} to a {self.name}')
         return self
-
-    @staticmethod
-    def wrap_file(path_to_wrap: str) -> str:
-        return f"'{path_to_wrap}'"
 
 
 class Project(Node):
