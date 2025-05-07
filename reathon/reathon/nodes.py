@@ -9,7 +9,7 @@ class Node:
         self.parents = []
         self.add(*nodes_to_add)
         for prop, value in kwargs.items():
-            if isinstance(value, str):
+            if isinstance(value, str) or isinstance(value, Path):
                 value = f'"{value}"'
             self.props.append([prop.upper(), value])
 
