@@ -114,11 +114,11 @@ project.write("properties1.rpp") # write the project out to the path
 """
 setup(
     name="reathon",
-    version="0.0.8",
+    version="0.0.9",
     author="James Bradbury",
     url="https://github.com/jamesb93/reathon",
     license="GLPv3+",
-    author_email="jamesbradbury93@gmail.com",
+    author_email="",
     long_description=long_description,
     long_description_content_type="text/markdown",
     description="Construct REAPER projects in Python.",
